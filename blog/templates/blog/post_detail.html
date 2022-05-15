@@ -75,7 +75,9 @@
                         <a class="badge bg-secondary text-decoration-none link-light" href="#!">Freebies</a>
                     </header>
                     <!-- Preview image figure-->
-                    <figure class="mb-4"><img class="img-fluid rounded" src="https://dummyimage.com/900x400/ced4da/6c757d.jpg" alt="..."></figure>
+                    {% if post.header_image %}
+                    <figure class="mb-4"><img class="img-fluid rounded" src="{{ post.header_image.url }}" alt="..."></figure>
+                    {% endif %}
                     <!-- Post content-->
                     <section class="mb-5">
                         <p>{{ post.content }}</p>
