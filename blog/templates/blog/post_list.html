@@ -65,7 +65,8 @@
                 <h1 class="fw-bolder">Blog</h1>
             </header>
             <!-- Blog entries-->
-            <div class="col-lg-8">
+            <div class="col-lg-8" id="main-area">
+                {% if post_list.exists %}
                 {% for post in post_list %}
                 <!-- Featured blog post-->
                 <div class="card mb-4">
@@ -83,6 +84,9 @@
                     </div>
                 </div>
                 {% endfor %}
+                {% else %}
+                <h3>There are no posts yet.</h3>
+                {% endif %}
                 <!-- Pagination-->
                 <nav aria-label="Pagination">
                     <hr class="my-0" />
