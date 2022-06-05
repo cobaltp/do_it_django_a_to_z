@@ -1,3 +1,5 @@
+from django.http import HttpRequest
+from django.urls import resolve
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from bs4 import BeautifulSoup
@@ -35,14 +37,16 @@ def test_category_card(tv: TestCase, soup: BeautifulSoup):
 class TestView(TestCase):
     def setUp(self):
         self.client = Client()
-        self.user_001 = User.objects.create(
+        self.user_001 = User.objects.create_user(
             username='user001',
             password='testpsword000',
         )
-        self.user_002 = User.objects.create(
+        self.user_002 = User.objects.create_user(
             username='user002',
             password='testpsword000',
         )
+        self.user_002.is_staff = True
+        self.user_002.save()
         self.category_programming = Category.objects.create(
             name='programming',
             slug='programming',
@@ -52,12 +56,12 @@ class TestView(TestCase):
             slug='music',
         )
         self.tag_python = Tag.objects.create(
-            name='python',
-            slug='python',
+            name='python00',
+            slug='python00',
         )
         self.tag_python_2 = Tag.objects.create(
-            name='python2',
-            slug='python2',
+            name='python02',
+            slug='python02',
         )
         self.tag_hello = Tag.objects.create(
             name='hello',
@@ -193,3 +197,86 @@ class TestView(TestCase):
         self.assertIn(self.post_001.title, main_area.text)
         self.assertNotIn(self.post_002.title, main_area.text)
         self.assertNotIn(self.post_003.title, main_area.text)
+
+    def test_create_page(self):
+        response = self.client.get('/blog/create_post/')
+        self.assertNotEqual(response.status_code, 200)
+
+        self.client.login(username='user001', password='testpsword000')
+        response = self.client.get('/blog/create_post/')
+        self.assertNotEqual(response.status_code, 200)
+
+        self.client.login(username='user002', password='testpsword000')
+        response = self.client.get('/blog/create_post/')
+        self.assertEqual(response.status_code, 200)
+        soup = BeautifulSoup(response.content, 'html.parser')
+
+        self.assertEqual('Create Post - Blog', soup.title.text)
+        main_area = soup.find('div', id='main-area')
+        self.assertIn('Create New Post', main_area.text)
+
+        tag_str_input = main_area.find('input', id='id_tags_str')
+        self.assertTrue(tag_str_input)
+
+        self.client.post(
+            '/blog/create_post/',
+            {
+                'title': 'test create post',
+                'content': 'test create post content',
+                'tags_str': 'new tag; test, python00',
+            }
+        )
+        self.assertEqual(Post.objects.count(), 4)
+        last_post = Post.objects.last()
+        self.assertEqual(last_post.title, 'test create post')
+        self.assertEqual(last_post.author.username, 'user002')
+
+        self.assertEqual(last_post.tags.count(), 3)
+        self.assertTrue(Tag.objects.get(name='new tag'))
+        self.assertTrue(Tag.objects.get(name='test'))
+        self.assertEqual(Tag.objects.count(), 5)
+
+    def test_update_page(self):
+        update_post_url = f'/blog/update_post/{self.post_003.pk}/'
+
+        response = self.client.get(update_post_url)
+        self.assertNotEqual(response.status_code, 200)
+
+        self.assertNotEqual(self.post_003.author, self.user_001)
+        self.client.login(username=self.user_001.username, password='testpsword000')
+        response = self.client.get(update_post_url)
+        self.assertEqual(response.status_code, 403)
+
+        self.client.login(username='user002', password='testpsword000')
+        response = self.client.get(update_post_url)
+        self.assertEqual(response.status_code, 200)
+        soup = BeautifulSoup(response.content, 'html.parser')
+
+        self.assertEqual('Edit Post - Blog', soup.title.text)
+        main_area = soup.find('div', id='main-area')
+        self.assertIn('Edit Post', main_area.text)
+
+        tag_str_input = main_area.find('input', id='id_tags_str')
+        self.assertTrue(tag_str_input)
+        self.assertIn('python00; python02', tag_str_input.attrs['value'])
+
+        self.client.post(
+            update_post_url,
+            {
+                'title': 'third post edit',
+                'content': 'third content edit',
+                'category': self.category_music.pk,
+                'tags_str': 'python test; python02; some tag'
+            },
+            follow=True
+        )
+        response = self.client.get(f'/blog/{self.post_003.pk}/')
+        soup = BeautifulSoup(response.content, 'html.parser')
+        main_area = soup.find('div', id='main-area')
+        self.assertIn('third post edit', main_area.text)
+        self.assertIn('third content edit', main_area.text)
+        self.assertIn(self.category_music.name, main_area.text)
+        self.assertIn('python test', main_area.text)
+        self.assertIn('python02', main_area.text)
+        self.assertIn('some tag', main_area.text)
+        self.assertNotIn('python00', main_area.text)

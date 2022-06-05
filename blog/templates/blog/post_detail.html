@@ -9,6 +9,9 @@
     <header class="mb-4">
         <!-- Post title-->
         <h1 class="py-2 fw-bolder mb-1">{{ post.title }}</h1>
+        {% if user.is_authenticated and user == post.author %}
+        <a class="btn btn-info btn-sm float-end" href="/blog/update_post/{{ post.pk }}/" role="button"><i class="fa-solid fa-pen"></i>&nbsp;Edit Post</a>
+        {% endif %}
         <!-- Post meta content-->
         <div class="text-muted fst-italic mb-2">{{ post.created_at }} by {{ post.author }}</div>
         <!-- Post category and tags-->

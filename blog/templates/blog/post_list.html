@@ -1,6 +1,9 @@
 {% extends 'blog/base.html' %}
 
 {% block main_area %}
+{% if user.is_authenticated %} {% if user.is_superuser or user.is_staff %}
+<a class="btn btn-info btn-sm float-end" href="/blog/create_post/" role="button"><i class="fa-solid fa-pen"></i>&nbsp;New Post</a>
+{% endif %} {% endif %}
 <!-- Page header with logo and tagline-->
 <header class="py-2 bg-light border-bottom mb-3">
     <h1 class="fw-bolder">Blog
