@@ -6,13 +6,13 @@
 <h1>Create New Post</h1>
 <hr />
 <form class="row" method="post" enctype="multipart/form-data">{% csrf_token %}
-    {{ form | crispy }}
+    {{ form|crispy }}
     <div id="div_id_tags_str">
         <label for="id_tags_str">Tags:</label>
         <input type="text" id="id_tags_str" name="tags_str" class="textinput textInput form-control"></input>
         <br />
     </div>
-    <button type="submit" class="btn bg-primary my-3 float-end">Submit</button>
+    <button type="submit" class="btn btn-primary my-3 float-end">Submit</button>
 </form>
 {{ form.media }}
 {% endblock %}

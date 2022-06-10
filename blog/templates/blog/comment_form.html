@@ -1,0 +1,14 @@
+{% extends 'blog/base_full_width.html' %}
+{% load crispy_forms_tags %}
+{% block head_title %}Edit Comment - Blog{% endblock %}
+
+{% block main_area %}
+<h1>Create New Post</h1>
+<hr />
+<form method="post" id="comment-form" enctype="multipart/form-data">{% csrf_token %}
+    {{ form|crispy }}
+    <br />
+    <button type="submit" class="btn btn-primary my-3 float-end">Submit</button>
+</form>
+{{ form.media }}
+{% endblock %}

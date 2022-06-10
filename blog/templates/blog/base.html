@@ -35,11 +35,11 @@
                             <ul class="list-unstyled mb-0">
                                 {% for category in categories %}
                                 <li>
-                                    <a class="badge bg-primary text-decoration-none" href="{{ category.get_absolute_url }}">{{ category }} ({{ category.post_set.count }})</a>
+                                    <a class="badge text-bg-primary text-decoration-none" href="{{ category.get_absolute_url }}">{{ category }} ({{ category.post_set.count }})</a>
                                 </li>
                                 {% endfor %}
                                 <li>
-                                    <a class="badge bg-primary text-decoration-none" href="/blog/category/no_category/">No category ({{ no_category_post_count }})</a>
+                                    <a class="badge text-bg-primary text-decoration-none" href="/blog/category/no_category/">No category ({{ no_category_post_count }})</a>
                                 </li>
                             </ul>
                         </div>

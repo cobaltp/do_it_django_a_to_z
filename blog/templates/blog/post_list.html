@@ -21,13 +21,13 @@
         {% endif %}
     </a>
     <div class="card-body">
-        <a class="badge bg-primary text-decoration-none float-end" href="{{ post.category.get_absolute_url }}">{% if post.category %}{{ post.category }}{% else %}No category{% endif %}</a>
+        <a class="badge text-bg-primary text-decoration-none float-end" href="{{ post.category.get_absolute_url }}">{% if post.category %}{{ post.category }}{% else %}No category{% endif %}</a>
         <h2 class="card-title">{{ post.title }}</h2>
         <div class="small text-muted">{{ post.created_at }} by {{ post.author }}</div>
         {% if post.hook_text %}
         <h5 class="text-muted"><i>―&nbsp;{{ post.hook_text }}</i></h5>
         {% endif %}
-        <p class="my-2 card-text">{{ post.get_content_markdown | truncatewords_html:45 | safe }}</p>
+        <p class="my-2 card-text">{{ post.get_content_markdown|truncatewords_html:45|safe }}</p>
         {% if post.tags.exists %}
         <div class="mb-3">
             <i class="fa-solid fa-tags"></i>
