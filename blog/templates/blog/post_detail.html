@@ -76,11 +76,13 @@
             <div class="d-flex mt-4" id="comment-{{ comment.pk }}">
                 <div class="flex-shrink-0"><img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..."></div>
                 <div class="flex-fill ms-3">
+                    <!-- Comment buttons-->
                     {% if user.is_authenticated and comment.author == user %}
                     <div class="float-end">
                         <a role="button" class="btn btn-sm btn-info" id="comment-{{ comment.pk }}-update-btn" href="/blog/update_comment/{{ comment.pk }}/">edit</a>
                         <a role="button" class="btn btn-sm btn-danger" id="comment-{{ comment.pk }}-delete-modal-btn" href="/blog/delete_comment/{{ comment.pk }}/" data-bs-toggle="modal" data-bs-target="#deleteCommentModal-{{ comment.pk }}">delete</a>
                     </div>
+                    <!-- Delete modal-->
                     <div class="modal fade" id="deleteCommentModal-{{ comment.pk }}" tabindex="-1" aria-labelledby="deleteCommentModalLabel">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -101,11 +103,12 @@
                         </div>
                     </div>
                     {% endif %}
+                    <!-- Comment texts-->
                     <div>
                         <span class="fw-bold">{{ comment.author.username }}</span>
                         <span class="text-muted fst-italic">{{ comment.created_at }}</span>
                     </div>
-                    <p>{{ comment.content|linebreaks }}</p>
+                    <div class="text">{{ comment.content|linebreaks }}</div>
                     {% if comment.created_at != comment.modified_at %}
                     <p class="text-muted float-end"><small>Updated: {{ comment.modified_at }}</small></p>
                     {% endif %}
