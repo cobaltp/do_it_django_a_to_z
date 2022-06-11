@@ -9,6 +9,7 @@
     <h1 class="fw-bolder">Blog
         {% if category %}<span class="badge badge-pill bg-primary">{{ category }}</span>{% endif %}
         {% if tag %}<span class="badge badge-pill bg-secondary"><i class="fa-solid fa-tags"></i>&nbsp;{{ tag }}</span>{% endif %}
+        {% if search_info %}<small class="text-muted">{{ search_info }}</small>{% endif %}
     </h1>
 </header>
 {% if post_list.exists %}

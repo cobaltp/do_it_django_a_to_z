@@ -1,5 +1,4 @@
-from pyexpat import model
-from django.shortcuts import get_list_or_404, render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
@@ -57,7 +56,7 @@ class PostCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
                     if is_tag_created:
                         tag.slug = slugify(t, allow_unicode=True)
                         tag.save()
-                    
+
                     self.object.tags.add(tag)
 
             return response
@@ -101,7 +100,7 @@ class PostUpdate(LoginRequiredMixin, UpdateView):
                 if is_tag_created:
                     tag.slug = slugify(t, allow_unicode=True)
                     tag.save()
-                
+
                 self.object.tags.add(tag)
 
         return response
@@ -151,7 +150,7 @@ def new_comment(request, pk):
                 comment.post = post
                 comment.author = request.user
                 comment.save()
-                
+
             return redirect(comment.get_absolute_url())
         else:
             raise PermissionDenied
@@ -174,6 +173,25 @@ def delete_comment(request, pk):
         return redirect(post.get_absolute_url())
     else:
         raise PermissionDenied
+
+class PostSearch(PostList):
+    paginated_by = None
+
+    class Meta:
+        ordering = ['-id']
+
+    def get_queryset(self):
+        q = self.kwargs['q']
+        post_list = (Post.objects.filter(title__contains=q) | Post.objects.filter(tags__name__contains=q)).distinct()
+
+        return post_list
+
+    def get_context_data(self, **kwargs):
+        context = super(PostSearch, self).get_context_data()
+        q = self.kwargs['q']
+        context['search_info'] = f'Search: {q} ({self.get_queryset().count()})'
+
+        return context
 
 # def index(request):
 #     posts = Post.objects.all().order_by('-pk')
